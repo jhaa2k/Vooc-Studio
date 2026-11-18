@@ -323,7 +323,7 @@ class VoocRoot(FloatLayout):
         bar = BoxLayout(size_hint_y=None, height=dp(48), spacing=dp(2))
         logo = m3.Box(bg=T.primary, radius=dp(3), size_hint=(None, None), size=(dp(32), dp(32)), padding=dp(7))
         logo.add_widget(m3.Icon(name="bars", tint=T.on_primary))
-        holder = BoxLayout(size_hint_x=None, width=dp(38), padding=(0, dp(8))
+        holder = BoxLayout(size_hint_x=None, width=dp(38), padding=(0, dp(8)))
         holder.add_widget(logo)
         bar.add_widget(holder)
         col = BoxLayout(orientation="vertical", padding=(dp(4), dp(4)))
