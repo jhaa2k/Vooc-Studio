@@ -78,13 +78,13 @@ class ModelTests(unittest.TestCase):
                                                          "Removed/Old/Key": 1}}]}
         project = ProjectModel.from_dict(data)
         self.assertEqual(project.layer("BARS").get("Bars Setup/Bars/Bar Count"), 32)
-        self.assertEqual(set(l.module for l in project.layers), set(DEFAULT_LAYER_ORDER))
+        self.assertEqual(set(l.module for l in project.layers), set(DEFAULT_LAYER_ORDER) | {"BARS"})
         self.assertEqual(len(project.layer("BARS").values), len(defaults("BARS")))
 
     def test_layer_order_is_back_to_front(self):
         order = [l.module for l in ProjectModel().layers]
-        self.assertLess(order.index("IMAGE"), order.index("BARS"))
-        self.assertLess(order.index("BLUREFFECT"), order.index("TEXT"))
+        self.assertEqual(order, DEFAULT_LAYER_ORDER)
+        self.assertEqual(set(order), {"COMPOSITION", "AUDIOPROVIDER"})
 
 
 if __name__ == "__main__":
