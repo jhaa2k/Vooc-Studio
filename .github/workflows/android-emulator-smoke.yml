@@ -8,7 +8,7 @@ on:
         required: false
         default: ""
       apk_run_id:
-        description: "Test the vooc-debug-apk artifact of this Build run id instead of building"
+        description: "Test the vooc-studio-debug-apk artifact of this Build run id instead of building"
         required: false
         default: ""
   push:
