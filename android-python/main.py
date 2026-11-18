@@ -785,7 +785,7 @@ class VoocRoot(FloatLayout):
             self._engine_changed(layer)
 
     def _page_visual(self, col):
-        bars = self.project.layer("BARS")
+        bars = next((layer for layer in self.project.layers if layer.module == "BARS"), None)
         look = self.s.look
         # templates
         col.add_widget(m3.section("Templates", "reuse a look on any track"))
@@ -834,44 +834,49 @@ class VoocRoot(FloatLayout):
                                     lambda on: (look.__setitem__("auto_palette", bool(on)), self._save_trigger()),
                                     "Recolor when a track with cover art loads"))
         col.add_widget(pc)
-        # spectrum
-        col.add_widget(m3.section("Spectrum", "double tap = reset, tap value = type"))
-        card = m3.card(spacing=dp(2))
-        rows = [("Bar count", B + "Bar Count", 4, 256, 1, lambda x: "%d" % x),
-                ("Sensitivity", B + "Height Scale", 0, 10, 0, lambda x: "%.2fx" % x),
-                ("Max height", B + "Max Height Scale", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
-                ("Smoothing", "Behavior/Physics/Softness", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
-                ("Rise delay", "Behavior/Physics/Reaction Delay", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
-                ("Bar width", B + "Bar Width", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
-                ("Bar spacing", B + "Bar Spacing", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
-                ("Bar Radius", "Bar Style/Shape/Bar Radius", 0, 50, 1, lambda x: "%d px" % round(x)),
-                ("Path size", B + "Path Size", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
-                ("Frequency min", "Behavior/Audio/Frequency Min (Hz)", 20, 2000, 1, lambda x: "%d Hz" % x),
-                ("Frequency max", "Behavior/Audio/Frequency Max (Hz)", 1000, 16000, 1,
-                 lambda x: ("%.1f kHz" % (x / 1000.0)) if x >= 1000 else "%d Hz" % x),
-                ("Rotation", "General/Scale & Rotation/Rotation", 0, 1, 0, lambda x: "%d deg" % round(x * 360))]
-        for title, path, lo, hi, step, fmt in rows:
-            spec = field_spec("BARS", path)
-            card.add_widget(m3.SliderRow(title, lo, hi, max(lo, min(hi, float(bars.get(path)))),
-                                         lambda x, p=path, st=step: self._setv(bars, p, int(round(x)) if st else round(x, 4)),
-                                         step=step, fmt=fmt, default=spec["default"]))
-        seg_count = sum(1 for i in (1, 2, 3) if bars.get("Segment %d/Segment %d/Enable Segment" % (i, i)))
-        card.add_widget(m3.SliderRow("Segments", 1, 3, max(1, seg_count), self._set_segments, step=1,
-                                     fmt=lambda x: "%d" % x, default=1))
-        for title, path in [("Shape / orientation", B + "Shape Path"),
-                            ("Cap style", "Bar Style/Shape/Cap Style"),
-                            ("Color mode", "Bar Style/Color/Color Mode"),
-                            ("Fill mode", "Bar Style/Color/Fill Mode"),
-                            ("Measure what", "Behavior/Audio/Measure What"),
-                            ("Audio channel", "Behavior/Audio/Audio Channel")]:
-            card.add_widget(m3.lbl(title, 12, T.on_var, size_hint_y=None, height=dp(22)))
-            card.add_widget(m3.SelectField(title, field_spec("BARS", path)["options"], bars.get(path),
-                                           lambda v, p=path: self._setv(bars, p, v)))
-        card.add_widget(m3.switch_row("Mirror bars", bool(bars.get("Segment 1/Segment 1/Mirror")),
-                                      lambda on: self._setv(bars, "Segment 1/Segment 1/Mirror", bool(on))))
-        card.add_widget(m3.switch_row("Flip input", bool(bars.get(B + "Flip Input")),
-                                      lambda on: self._setv(bars, B + "Flip Input", bool(on)), "High frequencies first"))
-        col.add_widget(card)
+        if bars is None:
+            col.add_widget(m3.section("Spectrum", "add Bars from the layer selector to edit spectrum settings"))
+            col.add_widget(m3.SelectField("Add layer", [title for title, module, _icon in ADDABLE],
+                                         "Choose layer type", self._choose_add_layer))
+        else:
+            # spectrum
+            col.add_widget(m3.section("Spectrum", "double tap = reset, tap value = type"))
+            card = m3.card(spacing=dp(2))
+            rows = [("Bar count", B + "Bar Count", 4, 256, 1, lambda x: "%d" % x),
+                    ("Sensitivity", B + "Height Scale", 0, 10, 0, lambda x: "%.2fx" % x),
+                    ("Max height", B + "Max Height Scale", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
+                    ("Smoothing", "Behavior/Physics/Softness", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
+                    ("Rise delay", "Behavior/Physics/Reaction Delay", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
+                    ("Bar width", B + "Bar Width", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
+                    ("Bar spacing", B + "Bar Spacing", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
+                    ("Bar Radius", "Bar Style/Shape/Bar Radius", 0, 50, 1, lambda x: "%d px" % round(x)),
+                    ("Path size", B + "Path Size", 0, 1, 0, lambda x: "%d%%" % round(x * 100)),
+                    ("Frequency min", "Behavior/Audio/Frequency Min (Hz)", 20, 2000, 1, lambda x: "%d Hz" % x),
+                    ("Frequency max", "Behavior/Audio/Frequency Max (Hz)", 1000, 16000, 1,
+                     lambda x: ("%.1f kHz" % (x / 1000.0)) if x >= 1000 else "%d Hz" % x),
+                    ("Rotation", "General/Scale & Rotation/Rotation", 0, 1, 0, lambda x: "%d deg" % round(x * 360))]
+            for title, path, lo, hi, step, fmt in rows:
+                spec = field_spec("BARS", path)
+                card.add_widget(m3.SliderRow(title, lo, hi, max(lo, min(hi, float(bars.get(path)))),
+                                             lambda x, p=path, st=step: self._setv(bars, p, int(round(x)) if st else round(x, 4)),
+                                             step=step, fmt=fmt, default=spec["default"]))
+            seg_count = sum(1 for i in (1, 2, 3) if bars.get("Segment %d/Segment %d/Enable Segment" % (i, i)))
+            card.add_widget(m3.SliderRow("Segments", 1, 3, max(1, seg_count), self._set_segments, step=1,
+                                         fmt=lambda x: "%d" % x, default=1))
+            for title, path in [("Shape / orientation", B + "Shape Path"),
+                                ("Cap style", "Bar Style/Shape/Cap Style"),
+                                ("Color mode", "Bar Style/Color/Color Mode"),
+                                ("Fill mode", "Bar Style/Color/Fill Mode"),
+                                ("Measure what", "Behavior/Audio/Measure What"),
+                                ("Audio channel", "Behavior/Audio/Audio Channel")]:
+                card.add_widget(m3.lbl(title, 12, T.on_var, size_hint_y=None, height=dp(22)))
+                card.add_widget(m3.SelectField(title, field_spec("BARS", path)["options"], bars.get(path),
+                                               lambda v, p=path: self._setv(bars, p, v)))
+            card.add_widget(m3.switch_row("Mirror bars", bool(bars.get("Segment 1/Segment 1/Mirror")),
+                                          lambda on: self._setv(bars, "Segment 1/Segment 1/Mirror", bool(on))))
+            card.add_widget(m3.switch_row("Flip input", bool(bars.get(B + "Flip Input")),
+                                          lambda on: self._setv(bars, B + "Flip Input", bool(on)), "High frequencies first"))
+            col.add_widget(card)
         # effects
         col.add_widget(m3.section("Effects", "%d effects" % len(QUICK_EFFECTS)))
         fx = m3.card(spacing=dp(2), padding=(dp(6), dp(6)))
@@ -885,25 +890,11 @@ class VoocRoot(FloatLayout):
                                            lambda x, l=layer, p=path: self._setv(l, p, round(x, 4)),
                                            default=spec["default"] if preset is None else _preset_intensity(preset)))
         col.add_widget(fx)
-        # other layers
-        col.add_widget(m3.section("Layers on canvas"))
-        other = m3.card(spacing=0, padding=(dp(4), dp(4)))
-        for title, module, sub in [("Album art", "IMAGE", "Cover of the current track"),
-                                   ("Particles", "PARTICLES", "Sparks driven by the beat"),
-                                   ("Title / artist text", "TEXT", "%title% and %artist%")]:
-            layer = self.project.layer(module)
-            other.add_widget(m3.switch_row(title, bool(layer.get("General/Layer/Visible")),
-                                           lambda v, l=layer: self._setv(l, "General/Layer/Visible", bool(v)), sub))
-        part = self.project.layer("PARTICLES")
-        other.add_widget(m3.SliderRow("Particle count", 0, 5000, float(part.get("Overall Settings/Emitter/Count Limit")),
-                                      lambda x: self._setv(part, "Overall Settings/Emitter/Count Limit", int(x)),
-                                      step=10, fmt=lambda x: "%d" % x, default=300))
-        comp = self.project.layer("COMPOSITION")
-        other.add_widget(m3.lbl("Background", 12, T.on_var, size_hint_y=None, height=dp(22)))
-        other.add_widget(m3.ColorField(comp.get(CANVAS + "Background Color"),
-                                       lambda v: self._setv(comp, CANVAS + "Background Color", v),
-                                       default="#070906FF", swatches=self._palette_swatches, title="Background"))
-        col.add_widget(other)
+        # Explicit layer creation: no hidden placeholder layers are inserted
+        # just because the Visual page was opened.
+        col.add_widget(m3.section("Layers", "add only the elements you want"))
+        col.add_widget(m3.SelectField("Add layer", [title for title, module, _icon in ADDABLE],
+                                     "Choose layer type", self._choose_add_layer))
         col.add_widget(m3.Button3("Reset look to template", lambda: self.apply_template_named(look.get("template", "Circle Classic")),
                                   kind="outlined", icon="reset"))
 
