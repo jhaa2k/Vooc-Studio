@@ -190,8 +190,7 @@ class VoocRoot(FloatLayout):
         self.s = ProjectState()
         self._autoload()
         self._apply_ui_theme()
-        m3.configure_ui_style(radius=self.s.scene.get("ui_radius", 5),
-                              borders=self.s.scene.get("ui_borders", False))
+        m3.configure_ui_style(radius=0, borders=False)
         self.page = "library"
         self._page_scroll_offsets = {}
         self._page_open_sections = {}
@@ -1578,8 +1577,7 @@ class VoocRoot(FloatLayout):
 
     def add_layer(self, module):
         layer = LayerModel(module)
-        if module in EFFECT_MODULES or module in VISIBLE_ON_ADD:
-            layer.set("General/Layer/Visible", True)
+        layer.set("General/Layer/Visible", True)
         if module == "TEXT":
             layer.set("Content/Text/Text Input", "Your text")
             layer.set("Content/Text/Use Metadata Variables", True)
@@ -1837,13 +1835,8 @@ class VoocRoot(FloatLayout):
         appearance.add_widget(m3.SelectField("Color vision", TE_VISION,
                                              sc.get("ui_vision", "None"),
                                              lambda v: self.set_ui_theme(ui_vision=v)))
-        appearance.add_widget(m3.section("Edges & borders", "UI surface controls"))
-        appearance.add_widget(m3.switch_row("Show border lines", bool(sc.get("ui_borders", False)),
-                                             lambda on: self._set_ui_edges(borders=bool(on)),
-                                             "Off removes thin edge strokes throughout the app"))
-        appearance.add_widget(m3.SliderRow("Corner radius", 0, 16, float(sc.get("ui_radius", 5)),
-                                            lambda value: self._set_ui_edges(radius=value), step=1,
-                                            fmt=lambda value: "%d dp" % round(value), default=5))
+        appearance.add_widget(m3.lbl("Square edges enabled - borders disabled", 11, T.on_var,
+                                     size_hint_y=None, height=dp(22)))
         appearance.add_widget(m3.SelectField("Canvas background theme", list(THEMES),
                                              sc.get("theme", "Acid Night"), self._set_bg_theme))
         col.add_widget(appearance)
@@ -1904,17 +1897,13 @@ class VoocRoot(FloatLayout):
         self._save_trigger()
 
     def _set_ui_edges(self, radius=None, borders=None):
-        if radius is not None:
-            self.s.scene["ui_radius"] = max(0, min(16, int(round(radius))))
-        if borders is not None:
-            self.s.scene["ui_borders"] = bool(borders)
-        m3.configure_ui_style(radius=self.s.scene.get("ui_radius", 5),
-                              borders=self.s.scene.get("ui_borders", False))
+        self.s.scene["ui_radius"] = 0
+        self.s.scene["ui_borders"] = False
+        m3.configure_ui_style(radius=0, borders=False)
         self._save_trigger()
-        # Update mounted surfaces in place; avoid rebuilding the page mid-drag.
         for widget in self.walk():
             if isinstance(widget, m3.Box):
-                widget.radius = m3.UI_RADIUS
+                widget.radius = 0
                 widget._u()
 
     def _set_bg_theme(self, name):
