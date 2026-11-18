@@ -271,7 +271,6 @@ SCHEMA["IMAGE"] = OD([
         ])),
     ])),
 ])
-SCHEMA["IMAGE"]["General"]["Position"]["Position Y"] = slider(0.62)
 
 SCHEMA["TEXT"] = OD([
     ("General", general_category("Title")),
@@ -347,7 +346,6 @@ SCHEMA["TEXT"] = OD([
         ])),
     ])),
 ])
-SCHEMA["TEXT"]["General"]["Position"]["Position Y"] = slider(0.2)
 
 SCHEMA["BARS"] = OD([
     ("General", general_category("Spectrum")),
@@ -420,7 +418,6 @@ SCHEMA["BARS"] = OD([
     ])),
 ])
 
-SCHEMA["BARS"]["General"]["Position"]["Position Y"] = slider(0.62)
 
 SCHEMA["PARTICLES"] = OD([
     ("General", general_category("Particles")),
@@ -511,7 +508,6 @@ SCHEMA["PARTICLES"] = OD([
     ])),
 ])
 
-SCHEMA["PARTICLES"]["General"]["Position"]["Position Y"] = slider(0.62)
 
 SCHEMA["GROUP"] = OD([
     ("General", general_category("Group 1")),
