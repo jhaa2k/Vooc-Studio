@@ -1,7 +1,6 @@
-# Vooc Android
+# Vooc Studio Android
 
-Avee-Player-style audio visualizer built with Python + Kivy, packaged as an
-Android APK with Buildozer. Acid-green Material UI with dark and light themes.
+Avee-Player-style audio visualizer and music video studio, preserved from the Vooc baseline and being redesigned for Vooc Studio. The Android app currently uses Python + Kivy, Java platform bridges and GLSL/OpenGL ES rendering, packaged with Buildozer.
 
 ## Features
 
@@ -42,7 +41,7 @@ python -m unittest discover -s tests -v
 ## Build APK
 
 GitHub Actions (`.github/workflows/android-python-build.yml`) builds a debug
-APK on every push and uploads it as the `vooc-debug-apk` artifact.
+APK on every push and uploads it as the `vooc-studio-debug-apk` artifact.
 
 Local build on Linux / WSL:
 
@@ -57,3 +56,8 @@ buildozer android debug
   audio that is playing, and for the Microphone source.
 * Music / images (READ_MEDIA_AUDIO, READ_MEDIA_IMAGES): files are opened through
   the system picker; access is persisted so the playlist works after restart.
+
+
+## Vooc Studio redesign
+
+The new app id is `com.jhaa2k.voocstudio` so it can be installed alongside the original Vooc app. Development is on the `studio-dev` branch. See `../docs/TECH_STACK.md` and `../docs/REDESIGN_ROADMAP.md` for the hybrid architecture and migration gates.
