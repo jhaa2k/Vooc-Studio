@@ -2,10 +2,10 @@
 
 PRESET_NAMES = ["Low", "Medium", "High", "Ultra"]
 PRESETS = {
-    "Low": {"preview_fps": 30, "render_scale": 0.5, "heavy_blur": False, "max_bars": 64, "max_particles": 300},
-    "Medium": {"preview_fps": 30, "render_scale": 0.75, "heavy_blur": False, "max_bars": 128, "max_particles": 1000},
-    "High": {"preview_fps": 60, "render_scale": 1.0, "heavy_blur": True, "max_bars": 256, "max_particles": 2000},
-    "Ultra": {"preview_fps": 60, "render_scale": 1.0, "heavy_blur": True, "max_bars": 256, "max_particles": 5000},
+    "Low": {"preview_fps": 24, "render_scale": 0.5, "heavy_blur": False, "max_bars": 64, "max_particles": 250},
+    "Medium": {"preview_fps": 30, "render_scale": 0.65, "heavy_blur": False, "max_bars": 96, "max_particles": 600},
+    "High": {"preview_fps": 45, "render_scale": 0.85, "heavy_blur": True, "max_bars": 192, "max_particles": 1200},
+    "Ultra": {"preview_fps": 60, "render_scale": 1.0, "heavy_blur": True, "max_bars": 256, "max_particles": 2500},
 }
 GB = 1024 ** 3
 
