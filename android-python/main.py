@@ -250,11 +250,13 @@ class VoocRoot(FloatLayout):
         Clock.schedule_interval(self.tick, 1 / 15.0)
         self._tuner = PERF.AutoTuner()
         Clock.schedule_interval(self._auto_perf, 1.0)
-        if "preset_init" not in self.s.perf:
-            self.s.perf["preset_init"] = True
+        if self.s.perf.get("profile_version") != 2:
+            # One-time migration from the old full-quality defaults. Select a
+            # device-appropriate profile so low/mid-range phones do not start
+            # with an unnecessarily expensive 60 FPS full-resolution preview.
+            self.s.perf["profile_version"] = 2
             tier = PERF.ram_tier(PERF.device_ram())
-            if tier in ("Low", "Medium"):
-                Clock.schedule_once(lambda *_: self.apply_perf_preset(tier), 0)
+            Clock.schedule_once(lambda *_: self.apply_perf_preset(tier), 0)
         # The one-second filesystem poll is enabled only by the emulator test harness.
         if (Path(self._data_dir()) / "smoke_targets").exists():
             Clock.schedule_interval(self._smoke_autoload, 1.0)
