@@ -31,11 +31,11 @@ def _hex(value, alpha=1.0):
 
 SCHEMES = {
     "dark": {
-        "bg": "#121212", "surface": "#1E1E1E", "surface1": "#242424", "surface2": "#292929",
-        "surface3": "#303030", "outline": "#505650", "outline_var": "#383E38",
-        "on_surface": "#F3F6F3", "on_var": "#B4BDB4",
-        "primary": "#C6FF00", "on_primary": "#000000",
-        "primary_container": "#334D13", "on_primary_container": "#D9F99D",
+        "bg": "#0B0E0A", "surface": "#111610", "surface1": "#171D15", "surface2": "#1C2419",
+        "surface3": "#283322", "outline": "#46523D", "outline_var": "#303B2A",
+        "on_surface": "#F1F5EA", "on_var": "#A6B19B",
+        "primary": "#C6FF00", "on_primary": "#10140B",
+        "primary_container": "#34451A", "on_primary_container": "#E2FF9A",
         "secondary": "#2DD4BF", "secondary_container": "#123B37", "on_secondary_container": "#A7F3E8",
         "error": "#DC6B6B", "scrim": "#000000",
     },
@@ -96,13 +96,13 @@ class _Theme:
 T = _Theme()
 
 # Shared appearance tokens for every reusable surface.
-UI_RADIUS = dp(5)
+UI_RADIUS = dp(3)
 UI_BORDERS = False
 
 def configure_ui_style(radius=None, borders=None):
     global UI_RADIUS, UI_BORDERS
     if radius is not None:
-        UI_RADIUS = dp(max(0.0, min(16.0, float(radius))))
+        UI_RADIUS = dp(max(0.0, min(8.0, float(radius))))
     if borders is not None:
         UI_BORDERS = bool(borders)
 
@@ -445,7 +445,7 @@ class TouchGuard:
 
 # ---------------------------------------------------------------- buttons
 class Tap(TouchGuard, ButtonBehavior, Box):
-    """Pressable rounded surface with state-layer feedback."""
+    """Pressable square-corner surface with no ripple overlay."""
 
     def __init__(self, on_tap=None, **kw):
         super().__init__(**kw)
@@ -462,12 +462,10 @@ class Tap(TouchGuard, ButtonBehavior, Box):
         self._sr.pos, self._sr.size, self._sr.radius = self.pos, self.size, [self.radius]
 
     def on_press(self):
-        Animation.cancel_all(self._sc)
-        c = T.on_surface
-        self._sc.rgba = (c[0], c[1], c[2], 0.12)
+        self._sc.rgba = (0, 0, 0, 0)
 
     def on_release(self):
-        Animation(a=0, d=0.25).start(self._sc)
+        self._sc.rgba = (0, 0, 0, 0)
 
 
 class Button3(Tap):
@@ -521,7 +519,7 @@ class Button3(Tap):
 
 
 class IconBtn(TouchGuard, ButtonBehavior, Widget):
-    """Circular icon button. kind: standard | tonal | filled."""
+    """Square icon button. kind: standard | tonal | filled."""
     active = BooleanProperty(False)
 
     def __init__(self, icon, on_tap=None, kind="standard", size=dp(44), tint=None, **kw):
@@ -531,9 +529,9 @@ class IconBtn(TouchGuard, ButtonBehavior, Widget):
         self._tint = tint
         with self.canvas.before:
             self._c = Color(0, 0, 0, 0)
-            self._e = Ellipse()
+            self._e = Rectangle()
             self._sc = Color(0, 0, 0, 0)
-            self._se = Ellipse()
+            self._se = Rectangle()
         self.icon = Icon(name=icon)
         self.add_widget(self.icon)
         self.bind(pos=self._u, size=self._u, active=self._colors)
@@ -562,12 +560,10 @@ class IconBtn(TouchGuard, ButtonBehavior, Widget):
         self.icon.size = (self.width - 2 * p, self.height - 2 * p)
 
     def on_press(self):
-        Animation.cancel_all(self._sc)
-        c = T.on_surface
-        self._sc.rgba = (c[0], c[1], c[2], 0.14)
+        self._sc.rgba = (0, 0, 0, 0)
 
     def on_release(self):
-        Animation(a=0, d=0.3).start(self._sc)
+        self._sc.rgba = (0, 0, 0, 0)
 
 
 # ---------------------------------------------------------------- chips
@@ -577,7 +573,7 @@ class Chip(Tap):
     def __init__(self, text, on_tap=None, selected=False, swatch=None, **kw):
         kw.setdefault("size_hint", (None, None))
         kw.setdefault("height", dp(34))
-        super().__init__(on_tap=on_tap, radius=dp(10), padding=(dp(12), 0), spacing=dp(6), **kw)
+        super().__init__(on_tap=on_tap, radius=dp(3), padding=(dp(12), 0), spacing=dp(6), **kw)
         self.swatch = swatch
         if swatch:
             self._sw = Widget(size_hint=(None, None), size=(dp(16), dp(16)))
@@ -1337,7 +1333,7 @@ class SelectField(Tap):
 # ---------------------------------------------------------------- navigation
 class NavBar(Box):
     def __init__(self, items, on_select, current, **kw):
-        super().__init__(size_hint_y=None, height=dp(52), bg=T.surface2, padding=(dp(2), dp(3), dp(2), dp(3)), **kw)
+        super().__init__(size_hint_y=None, height=dp(56), bg=T.surface, radius=dp(3), padding=(dp(2), dp(3), dp(2), dp(3)), **kw)
         self.on_select = on_select
         self.items = {}
         for key, icon, title in items:
@@ -1402,11 +1398,11 @@ class _NavItem(TouchGuard, ButtonBehavior, BoxLayout):
 
 class Segmented(Box):
     def __init__(self, options, value, on_change, **kw):
-        super().__init__(size_hint_y=None, height=dp(42), line=T.outline, radius=dp(21), spacing=0, **kw)
+        super().__init__(size_hint_y=None, height=dp(42), line=T.outline, radius=dp(3), spacing=0, **kw)
         self.on_change = on_change
         self.btns = {}
         for i, opt in enumerate(options):
-            b = Tap(radius=dp(20), padding=(dp(6), 0), spacing=dp(4))
+            b = Tap(radius=dp(2), padding=(dp(6), 0), spacing=dp(4))
             b.icon = Icon(name="check", size_hint_x=None, width=dp(16))
             b.label = lbl(opt, 13, bold=True, halign="center")
             b.add_widget(b.icon)
@@ -1436,7 +1432,7 @@ class Snackbar:
         """``action`` adds a text button (e.g. "Undo"); the bar then stays 5 s."""
         if cls._current is not None and cls._current.parent:
             cls._current.parent.remove_widget(cls._current)
-        bar = Box(bg=T.on_surface, radius=dp(10), padding=(dp(16), 0, dp(6), 0), size_hint=(None, None),
+        bar = Box(bg=T.on_surface, radius=dp(3), padding=(dp(16), 0, dp(6), 0), size_hint=(None, None),
                   height=dp(48), width=parent.width - dp(32), pos=(parent.x + dp(16), parent.y + dp(84)))
         bar.add_widget(lbl(text, 13, T.surface, shorten=True))
         if action and on_action:
