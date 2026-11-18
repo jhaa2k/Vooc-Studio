@@ -627,8 +627,16 @@ class VoocRoot(FloatLayout):
                     self._page_accordion_open.discard(panel_key)
                     self._page_open_sections[page] = set(self._page_accordion_open)
                 else:
-                    # Each section owns its own expanded state. Tapping one
-                    # section never collapses a different section.
+                    # Single-open accordion: opening this section closes
+                    # every other expanded section on the same page.
+                    for _card, state in self._page_accordion_panels:
+                        other, other_icon, other_key = state
+                        if other is not box and other._expanded:
+                            other._expanded = False
+                            other.height = 0
+                            other.opacity = 0
+                            other_icon.name = "down"
+                            self._page_accordion_open.discard(other_key)
                     box._expanded = True
                     self._page_accordion_open.add(panel_key)
                     self._page_open_sections[page] = set(self._page_accordion_open)
