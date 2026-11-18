@@ -42,6 +42,18 @@ ASSET_TYPES = ("image", "font", "file")
 KEEP_ON_APPLY = ("AUDIOPROVIDER",)       # device audio routing is not part of a look
 
 
+class _LazyLayerMap(dict):
+    """Create template layers only when a built-in preset actually references them."""
+    def __init__(self, project):
+        super().__init__((layer.module, layer) for layer in project.layers)
+        self.project = project
+
+    def __missing__(self, module):
+        layer = self.project.layer(module)
+        self[module] = layer
+        return layer
+
+
 def _fx_on(layers, module, **values):
     layer = layers[module]
     layer.set("General/Layer/Visible", True)
@@ -51,7 +63,7 @@ def _fx_on(layers, module, **values):
 
 def _builtin(name):
     p = ProjectModel()
-    L = {l.module: l for l in p.layers}
+    L = _LazyLayerMap(p)
     if name == "Circle Classic":
         pass
     elif name == "Linear Spectrum":
