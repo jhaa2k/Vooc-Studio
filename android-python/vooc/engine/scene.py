@@ -136,7 +136,11 @@ class SceneView(Widget):
         except (ValueError, TypeError):
             fps = 60
         if not self.offline:
-            fps = min(fps, int(self.perf.get("preview_fps", 60) or 60))
+            fps = min(fps, int(self.perf.get("preview_fps", 30) or 30))
+            # Idle preview uses a lower refresh; playback automatically restores
+            # the selected target FPS without changing export frame timing.
+            if self.hub is None or not self.hub.is_playing():
+                fps = min(fps, 15)
         return max(10, fps)
 
     def set_perf(self, **values):
