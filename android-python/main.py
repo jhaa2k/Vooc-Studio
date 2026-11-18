@@ -1474,13 +1474,16 @@ class VoocRoot(FloatLayout):
         layer_options = [title for title, module, _icon in ADDABLE]
         col.add_widget(m3.SelectField("Add layer", layer_options, "Choose layer type", self._choose_add_layer))
         col.add_widget(m3.section("Layer stack", "top draws last"))
-        layers = self.project.layers
+        layers = [layer for layer in self.project.layers if layer.module not in FIXED_MODULES]
         if self.selected_layer not in layers:
-            self.selected_layer = next((l for l in reversed(layers) if l.module not in FIXED_MODULES), None)
+            self.selected_layer = next(reversed(layers), None) if layers else None
         self._layer_tile_widgets = {}
         self._layer_rows_host = BoxLayout(orientation="vertical", size_hint_y=None, spacing=dp(4))
         self._layer_rows_host.bind(minimum_height=self._layer_rows_host.setter("height"))
         col.add_widget(self._layer_rows_host)
+        if not layers:
+            self._layer_rows_host.add_widget(m3.lbl("No visual layers yet. Add one from the selector above.",
+                                                    12, T.on_var, size_hint_y=None, height=dp(42)))
         for layer in reversed(layers):
             self._layer_rows_host.add_widget(self._make_layer_row(layer))
         self._layer_inspector = BoxLayout(orientation="vertical", size_hint_y=None, spacing=dp(6))
