@@ -290,7 +290,10 @@ class AdvancedProperties(BoxLayout):
                 if box._expanded:
                     close_panel(box, icon, sec)
                 else:
-                    # Property sections expand independently; do not collapse siblings.
+                    # Keep exactly one property category expanded at a time.
+                    for other_sec, (other_box, other_icon, other_close) in self._section_panels.items():
+                        if other_box is not box and other_box._expanded:
+                            other_close()
                     populate(sec, grp, box)
                     box._expanded = True
                     self._open_sections.add(sec)
