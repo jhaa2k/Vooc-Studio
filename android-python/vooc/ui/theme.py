@@ -9,10 +9,10 @@ def _hex(value, alpha=1.0):
 
 PALETTES = {
     "dark": {
-        "bg": _hex("#121212"), "surface": _hex("#1E1E1E"), "surface_hi": _hex("#262626"),
-        "surface_top": _hex("#303030"), "outline": _hex("#484848"),
-        "on_surface": _hex("#EEF3E6"), "muted": _hex("#8E9886"),
-        "primary": _hex("#C6FF00"), "on_primary": _hex("#000000"),
+        "bg": _hex("#0B0E0A"), "surface": _hex("#111610"), "surface_hi": _hex("#171D15"),
+        "surface_top": _hex("#283322"), "outline": _hex("#46523D"),
+        "on_surface": _hex("#F1F5EA"), "muted": _hex("#A6B19B"),
+        "primary": _hex("#C6FF00"), "on_primary": _hex("#10140B"),
         "primary_soft": _hex("#C6FF00", 0.14), "secondary": _hex("#5BFFB0"),
         "danger": _hex("#FF6B5B"), "warning": _hex("#FFC14D"), "scrim": _hex("#000000", 0.6),
     },
@@ -42,7 +42,7 @@ T = Theme()
 # spacing / type scale
 PAD = dp(16)
 GAP = dp(10)
-RADIUS = dp(18)
+RADIUS = dp(3)
 ROW_H = dp(52)
 FS_TITLE = sp(20)
 FS_BODY = sp(14)
