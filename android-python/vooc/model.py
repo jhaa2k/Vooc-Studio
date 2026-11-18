@@ -161,6 +161,14 @@ class ProjectModel:
         project = cls()
         layers = [LayerModel.from_dict(d) for d in data.get("layers", [])
                   if d.get("module") in MODULES]
+        # Migrate legacy visual modules to the new centered default only when
+        # their saved position still equals the old built-in default.
+        legacy_y = {"IMAGE": 0.62, "TEXT": 0.2, "BARS": 0.62, "PARTICLES": 0.62}
+        for layer in layers:
+            old_y = legacy_y.get(layer.module)
+            path = "General/Position/Position Y"
+            if old_y is not None and abs(float(layer.values.get(path, 0.5)) - old_y) < 1e-6:
+                layer.set(path, 0.5)
         # Remove untouched, default-hidden placeholders left by older Vooc builds.
         # Customized layers and user-enabled layers are preserved.
         core = set(DEFAULT_LAYER_ORDER)
