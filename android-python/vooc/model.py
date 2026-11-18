@@ -177,9 +177,10 @@ class ProjectModel:
                   or layer.values.get("General/Layer/Visible", True)
                   or layer.values != defaults(layer.module)]
         if layers:
-            project.layers = layers
-            for module in DEFAULT_LAYER_ORDER:
-                project.layer(module)
+            core_layers = {layer.module: layer for layer in layers if layer.module in core}
+            project.layers = [core_layers.get(module) or LayerModel(module)
+                              for module in DEFAULT_LAYER_ORDER]
+            project.layers.extend(layer for layer in layers if layer.module not in core)
         project.playlist = [p for p in data.get("playlist", []) if isinstance(p, dict) and p.get("uri")]
         project.track_index = int(data.get("track_index", -1))
         project.ui.update(data.get("ui", {}))
