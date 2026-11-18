@@ -4,7 +4,7 @@
 # picker, play it, open every tab, switch to the Android native player.
 # Collects screenshots + logcat in smoke-out/.
 set -x
-PKG=com.jhaa2k.vooc
+PKG=com.jhaa2k.voocstudio
 APK=$(ls apk/*.apk | head -1)
 OUT=smoke-out
 mkdir -p "$OUT"
