@@ -20,9 +20,7 @@ SAVE_VERSION = 2
 
 # Creation order == z-order: the first layer is at the back.
 # Effects process everything beneath them, so TEXT sits on top and stays sharp.
-DEFAULT_LAYER_ORDER = ["COMPOSITION", "AUDIOPROVIDER", "IMAGE", "PARTICLES",
-                       "BARS", "BLUREFFECT", "MOTIONBLUREFFECT", "MIRROREREFFECT",
-                       "RGBSPLITEFFECT", "CUSTOMSHADER", "TEXT"]
+DEFAULT_LAYER_ORDER = ["COMPOSITION", "AUDIOPROVIDER"]
 
 
 def _coerce(spec, value):
@@ -163,9 +161,15 @@ class ProjectModel:
         project = cls()
         layers = [LayerModel.from_dict(d) for d in data.get("layers", [])
                   if d.get("module") in MODULES]
+        # Remove untouched, default-hidden placeholders left by older Vooc builds.
+        # Customized layers and user-enabled layers are preserved.
+        core = set(DEFAULT_LAYER_ORDER)
+        layers = [layer for layer in layers
+                  if layer.module in core
+                  or layer.values.get("General/Layer/Visible", True)
+                  or layer.values != defaults(layer.module)]
         if layers:
             project.layers = layers
-            # make sure every module exists at least once
             for module in DEFAULT_LAYER_ORDER:
                 project.layer(module)
         project.playlist = [p for p in data.get("playlist", []) if isinstance(p, dict) and p.get("uri")]
