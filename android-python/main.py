@@ -255,7 +255,9 @@ class VoocRoot(FloatLayout):
             tier = PERF.ram_tier(PERF.device_ram())
             if tier in ("Low", "Medium"):
                 Clock.schedule_once(lambda *_: self.apply_perf_preset(tier), 0)
-        Clock.schedule_interval(self._smoke_autoload, 1.0)
+        # The one-second filesystem poll is enabled only by the emulator test harness.
+        if (Path(self._data_dir()) / "smoke_targets").exists():
+            Clock.schedule_interval(self._smoke_autoload, 1.0)
         if Window is not None:
             Window.bind(on_keyboard=self._on_key)
 
