@@ -19,7 +19,7 @@ class ProjectState:
         self.properties={}
         self.engine=None
         self.export={"resolution":"FHD 1080p","fps":"30","aspect":"16:9","codec":"H.264 (AVC)","quality":"Standard","audio":True}
-        self.perf={"preview_fps":60,"render_scale":1.0,"heavy_blur":True,"max_bars":256,"max_particles":2000}
+        self.perf={"preview_fps":30,"render_scale":0.65,"heavy_blur":False,"max_bars":96,"max_particles":600,"profile_version":2}
         self.palettes={}
         self.look={"template":"Circle Classic","palette":"Acid","auto_palette":True}
         self.presets={"Classic Bars":dict(self.audio),"Deep Bass":dict(self.audio,bass=8,eq_0=6,eq_1=4),"Wide":dict(self.audio,virtualizer=70)}
