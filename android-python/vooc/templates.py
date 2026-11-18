@@ -65,7 +65,10 @@ def _builtin(name):
     p = ProjectModel()
     L = _LazyLayerMap(p)
     if name == "Circle Classic":
-        pass
+        # The default look now creates only its actual visual element.
+        b = L["BARS"]
+        b.set("General/Layer/Visible", True)
+        b.set("Bars Setup/Bars/Shape Path", "Circle")
     elif name == "Linear Spectrum":
         b = L["BARS"]
         b.set("Bars Setup/Bars/Shape Path", "HorizontalLine")
