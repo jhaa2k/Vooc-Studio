@@ -1,11 +1,11 @@
 [app]
-title = Vooc
-package.name = vooc
+title = Vooc Studio
+package.name = voocstudio
 package.domain = com.jhaa2k
 source.dir = .
 source.include_exts = py,png,jpg,jpeg,webp,kv,atlas,json,ttf
 source.exclude_dirs = tests,docs,bin,ci,tools,.buildozer,__pycache__
-version = 1.0
+version = 2.0
 
 # Launcher icon + splash (PNGs in assets/, drawn by tools/make_assets.py, lime theme).
 icon.filename = %(source.dir)s/assets/icon.png
