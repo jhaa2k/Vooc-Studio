@@ -300,7 +300,7 @@ class VoocRoot(FloatLayout):
         if Window is not None:
             Window.clearcolor = T.bg
         top, bottom = self.insets
-        main = m3.Box(orientation="vertical", bg=T.bg, padding=(dp(3), dp(4) + top, dp(3), 0), spacing=dp(5))
+        main = m3.Box(orientation="vertical", bg=T.bg, padding=(dp(8), dp(4) + top, dp(8), 0), spacing=dp(6))
         main.add_widget(self._top_bar())
         self.live_line = Progress(size_hint_y=None, height=dp(2), bg=(0, 0, 0, 0))
         self.live_line.fill.radius = 0
@@ -320,15 +320,15 @@ class VoocRoot(FloatLayout):
         self._update_player_ui()
 
     def _top_bar(self):
-        bar = BoxLayout(size_hint_y=None, height=dp(46), spacing=dp(2))
-        logo = m3.Box(bg=T.primary, radius=dp(12), size_hint=(None, None), size=(dp(36), dp(36)), padding=dp(8))
+        bar = BoxLayout(size_hint_y=None, height=dp(48), spacing=dp(2))
+        logo = m3.Box(bg=T.primary, radius=dp(3), size_hint=(None, None), size=(dp(32), dp(32)), padding=dp(7))
         logo.add_widget(m3.Icon(name="bars", tint=T.on_primary))
-        holder = BoxLayout(size_hint_x=None, width=dp(42), padding=(0, dp(5)))
+        holder = BoxLayout(size_hint_x=None, width=dp(38), padding=(0, dp(8))
         holder.add_widget(logo)
         bar.add_widget(holder)
         col = BoxLayout(orientation="vertical", padding=(dp(4), dp(4)))
-        col.add_widget(m3.lbl("VOOC", 20, bold=True, font_name="Roboto"))
-        col.add_widget(m3.lbl("Audio visualizer studio", 11, T.on_var))
+        col.add_widget(m3.lbl("VOOC STUDIO", 18, bold=True, font_name="Roboto"))
+        col.add_widget(m3.lbl("AUDIO VISUAL WORKSPACE", 9, T.on_var))
         bar.add_widget(col)
         bar.add_widget(Widget())
         self.undo_btn = m3.IconBtn("undo", self.undo)
@@ -350,15 +350,15 @@ class VoocRoot(FloatLayout):
 
     def _visual_card(self):
         """Live engine preview at the real output aspect ratio (16:9 by default), never stretched."""
-        pad = dp(4)
-        frame = m3.Box(bg=T.surface1, radius=dp(14), padding=pad, size_hint_y=None)
+        pad = dp(2)
+        frame = m3.Box(bg=T.surface1, radius=dp(3), padding=pad, size_hint_y=None)
         holder = FloatLayout()
         stage = ClipStage(size_hint=(None, None))
 
         def fit(*_):
             ratio = self._preview_ratio()
             inner_w = max(dp(100), (frame.width or self.width or 360) - pad * 2)
-            limit = max(dp(108), (self.height or 800) * 0.30)
+            limit = max(dp(120), (self.height or 800) * 0.40)
             w = inner_w
             h = w / ratio
             if h > limit:                 # tall ratios: letterbox inside the card
@@ -392,10 +392,10 @@ class VoocRoot(FloatLayout):
 
     def _player_card(self):
         """Compact mini player: art + title + prev/play/next on one row, shuffle / seek / repeat below."""
-        c = m3.Box(orientation="vertical", bg=T.surface1, radius=dp(20), padding=(dp(10), dp(6), dp(10), dp(2)),
+        c = m3.Box(orientation="vertical", bg=T.surface1, radius=dp(3), padding=(dp(8), dp(5), dp(8), dp(2)), 
                    size_hint_y=None, height=dp(70), spacing=0)
         head = BoxLayout(size_hint_y=None, height=dp(38), spacing=dp(6))
-        art = m3.Box(bg=T.primary_container, radius=dp(10), size_hint=(None, None), size=(dp(36), dp(36)), padding=dp(9))
+        art = m3.Box(bg=T.primary_container, radius=dp(3), size_hint=(None, None), size=(dp(34), dp(34)), padding=dp(8))
         art.add_widget(m3.Icon(name="note", tint=T.on_primary_container))
         wrap = BoxLayout(size_hint_x=None, width=dp(36), padding=(0, dp(4)))
         wrap.add_widget(art)
@@ -2796,7 +2796,7 @@ def _preset_intensity(name):
 
 class VoocApp(App):
     def build(self):
-        self.title = "Vooc"
+        self.title = "Vooc Studio"
         if Window is not None:
             Window.clearcolor = (.047, .055, .039, 1)
         details = _STARTUP_IMPORT_ERROR
