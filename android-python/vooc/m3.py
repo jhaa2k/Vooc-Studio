@@ -96,15 +96,15 @@ class _Theme:
 T = _Theme()
 
 # Shared appearance tokens for every reusable surface.
-UI_RADIUS = dp(3)
+UI_RADIUS = dp(0)
 UI_BORDERS = False
 
 def configure_ui_style(radius=None, borders=None):
     global UI_RADIUS, UI_BORDERS
     if radius is not None:
-        UI_RADIUS = dp(max(0.0, min(8.0, float(radius))))
+        UI_RADIUS = dp(0)
     if borders is not None:
-        UI_BORDERS = bool(borders)
+        UI_BORDERS = False
 
 
 
@@ -123,7 +123,7 @@ class Box(BoxLayout):
 
     def __init__(self, **kw):
         # Consistent subtle corners across all app surfaces.
-        kw.setdefault("radius", UI_RADIUS)
+        kw["radius"] = 0
         super().__init__(**kw)
         with self.canvas.before:
             self._shadow_color = Color(0, 0, 0, 0)
